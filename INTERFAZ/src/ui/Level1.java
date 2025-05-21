@@ -11,7 +11,7 @@ public class Level1 extends JPanel {
     private Image fondoNivel1;
     private JButton playButton;
     private JButton volverButton;
-    private GameWindow window
+    private GameWindow window;
 
     public Level1(GameWindow window) {
         this.window = window;
