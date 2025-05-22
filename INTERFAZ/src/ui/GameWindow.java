@@ -4,6 +4,8 @@ import javax.swing.*;
 
 public class GameWindow extends JFrame {
 
+    private AudioPlayer audioPlayer;
+
     public GameWindow() {
         setTitle("Juego Gótico");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -11,8 +13,15 @@ public class GameWindow extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
-        setContentPane(new MainMenu(this));  
+        audioPlayer = new AudioPlayer();
+        audioPlayer.reproducirMusicaFondo("/res/Audio.wav");
+
+        setContentPane(new MainMenu(this, audioPlayer)); // <-- constructor corregido
 
         setVisible(true);
+    }
+
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
     }
 }
