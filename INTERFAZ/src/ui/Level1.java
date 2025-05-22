@@ -16,6 +16,7 @@ public class Level1 extends JPanel {
     private Player player;
     private Timer timer;       // Timer para animación y entrada (~60 FPS)
     private Timer timerJuego;  // Timer para estado de juego (~60 FPS)
+    private Timer timerSegundos; // Timer para conteo de segundos
 
     private Object keys;
     private ArrayList<Object> souls;
@@ -25,6 +26,8 @@ public class Level1 extends JPanel {
     private int tiempoRestante = 60;  // segundos
     private int cameraX = 0;           // desplazamiento cámara horizontal
     private final int nivelAncho = 4100; // ancho del nivel
+
+    private boolean juegoTerminado = false;  // Bandera para evitar múltiples cierres
 
     public Level1(GameWindow window) {
         this.window = window;
@@ -66,7 +69,7 @@ public class Level1 extends JPanel {
         });
         timerJuego.start();
 
-        Timer timerSegundos = new Timer(1000, e -> {
+        timerSegundos = new Timer(1000, e -> {
             if (tiempoRestante > 0) {
                 tiempoRestante--;
             }
@@ -154,7 +157,31 @@ public class Level1 extends JPanel {
         add(volverButton);
     }
 
+    private void detenerJuegoConMensaje(String mensaje) {
+        if (juegoTerminado) return;  // Evitar repetir ejecución
+        juegoTerminado = true;
+
+        timerJuego.stop();
+        timer.stop();
+        timerSegundos.stop();
+
+        UIManager.put("OptionPane.okButtonText", "OK");
+        JOptionPane.showMessageDialog(this, mensaje);
+
+        // Reiniciar nivel o volver a selector según mensaje
+        if (mensaje.contains("Win")) {
+            window.setContentPane(new LevelSelect(window));
+        } else {
+            window.setContentPane(new Level1(window));
+        }
+
+        window.revalidate();
+        window.repaint();
+    }
+
     private void actualizarEstado() {
+        if (juegoTerminado) return;
+
         // Actualizar jugador con entradas
         player.actualizar(teclado.isLeft(), teclado.isRight(), teclado.isJump());
         teclado.resetJump();
@@ -179,36 +206,17 @@ public class Level1 extends JPanel {
 
         // Condición de victoria: llave recolectada, todas las almas recogidas y tiempo restante
         if (!keys.estaActivo() && soulsRecolected == souls.size() && tiempoRestante > 0) {
-            timerJuego.stop();
-            timer.stop();
-            UIManager.put("OptionPane.okButtonText", "OK");
-            JOptionPane.showMessageDialog(this, "¡You Win!");
-
-            window.setContentPane(new LevelSelect(window));
-            window.revalidate();
-            window.repaint();
+            detenerJuegoConMensaje("¡You Win!");
+            return;
         }
         if (player.haPerdido()) {
-            timerJuego.stop();
-            timer.stop();
-            UIManager.put("OptionPane.okButtonText", "OK");
-            JOptionPane.showMessageDialog(this, "¡You Lose!");
-
-            window.setContentPane(new Level1(window));
-            window.revalidate();
-            window.repaint();
+            detenerJuegoConMensaje("¡You Lose!");
+            return;
         }
 
         // Condición de derrota: tiempo agotado
         if (tiempoRestante == 0) {
-            timerJuego.stop();
-            timer.stop();
-            UIManager.put("OptionPane.okButtonText", "OK");
-            JOptionPane.showMessageDialog(this, "¡Time Over! You Lose.");
-
-            window.setContentPane(new Level1(window));
-            window.revalidate();
-            window.repaint();
+            detenerJuegoConMensaje("¡Time Over! You Lose.");
         }
     }
 
@@ -218,18 +226,19 @@ public class Level1 extends JPanel {
 
         // Dibuja fondo desplazado por cámara
         g.drawImage(fondoNivel1, -cameraX, 0, nivelAncho, getHeight(), this);
-           try {
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento3.png")), 350 - cameraX, 390, 80, 100, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento2.png")), 4000 - cameraX, 180, 80, 100, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento4.png")), 0 - cameraX, 425, 60, 60, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 200 - cameraX, 395, 60, 100, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 1800 - cameraX, 395, 60, 100, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 900 - cameraX, 395, 60, 100, null);
-        g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento7.png")), 180 - cameraX, 450, 40, 40, null);
-         g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento7.png")), 900 - cameraX, 450, 40, 40, null);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
+        try {
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento3.png")), 350 - cameraX, 390, 80, 100, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento2.png")), 4000 - cameraX, 180, 80, 100, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento4.png")), 0 - cameraX, 425, 60, 60, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 200 - cameraX, 395, 60, 100, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 1800 - cameraX, 395, 60, 100, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento6.png")), 900 - cameraX, 395, 60, 100, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento7.png")), 180 - cameraX, 450, 40, 40, null);
+            g.drawImage(ImageIO.read(getClass().getResource("/res/Elemento7.png")), 900 - cameraX, 450, 40, 40, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // Dibuja plataformas
         for (Plataforma plataforma : plataformas) {
             plataforma.dibujar(g, cameraX);
@@ -247,13 +256,13 @@ public class Level1 extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.drawString("Time: " + tiempoRestante, 950, 40);
-        g.drawString("Souls: " + soulsRecolected + "/" + souls.size(), 800, 40);
+        g.drawString("Souls: " + soulsRecolected + "/" + souls.size(), 10, 40);
         try {
             Image elemento5 = ImageIO.read(getClass().getResource("/res/Elemento5.png"));
             
-            int anchoEscalado = 50;  // Cambia este valor según el tamaño que quieras
+            int anchoEscalado = 50;  // ancho de cada bloque del suelo
             int altoEscalado = 100;
-            int ySuelo = 570; // Altura del suelo
+            int ySuelo = 570; // altura del suelo
             int anchoPantalla = getWidth() + cameraX;
 
             for (int x = 0; x < anchoPantalla; x += anchoEscalado) {
@@ -263,7 +272,6 @@ public class Level1 extends JPanel {
             e.printStackTrace();
         }
 
-
-
     }
+    
 }

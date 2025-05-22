@@ -53,9 +53,9 @@ public class MenuOptions extends JPanel {
 
         // Botón regresar
         JButton back = new JButton();
-        back.setBounds(50, 500, 130, 114);
+        back.setBounds(50, 500, 60, 60);
         ImageIcon icon = new ImageIcon(getClass().getResource("/res/Back2.png"));
-        Image scaled = icon.getImage().getScaledInstance(100, 40, Image.SCALE_SMOOTH);
+        Image scaled = icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         back.setIcon(new ImageIcon(scaled));
 
         back.setBorderPainted(false);
