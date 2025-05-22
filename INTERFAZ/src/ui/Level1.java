@@ -206,7 +206,7 @@ public class Level1 extends JPanel {
 
         // Condición de victoria: llave recolectada, todas las almas recogidas y tiempo restante
         if (!keys.estaActivo() && soulsRecolected == souls.size() && tiempoRestante > 0) {
-            detenerJuegoConMensaje("¡You Win!");
+            detenerJuegoConMensaje("¡You Win!...If you want to play, you need to pay");
             return;
         }
         if (player.haPerdido()) {
