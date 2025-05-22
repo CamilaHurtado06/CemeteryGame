@@ -139,7 +139,6 @@ public class Player {
         }
 
         if (imagenDibujar != null) {
-            // Aplica desplazamiento de cámara en X
             g.drawImage(imagenDibujar, x - cameraX, y, width, height, null);
         }
     }
@@ -148,11 +147,28 @@ public class Player {
         return new Rectangle(x, y, width, height);
     }
 
+    // Getters y setters completos para posición y tamaño
     public int getX() {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public int getWidth() {
         return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

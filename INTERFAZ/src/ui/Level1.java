@@ -20,7 +20,7 @@ public class Level1 extends JPanel {
     private int tiempoRestante = 60;  // segundos
 
     private int cameraX = 0;           // Desplazamiento de la cámara en X
-    private final int nivelAncho = 3000; // Ajusta esto al ancho real del nivel
+    private final int nivelAncho = 4000; // Ajusta esto al ancho real del nivel
 
     public Level1(GameWindow window) {
         this.window = window;
